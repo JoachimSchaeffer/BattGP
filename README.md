@@ -10,7 +10,6 @@ We are finalizing the clean up and restructruing of the code and will upload the
 ## Data
 
 The data set is available on Zenodo: [https://zenodo.org/records/13715694](https://zenodo.org/records/13715694)
-[10.5281/zenodo.13715693](https://10.5281/zenodo.13715693)
 
 ## Corresponding Manuscript
 Please cite the manuscript if you use this library or associated data in your research.
