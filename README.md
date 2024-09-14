@@ -15,9 +15,9 @@ The data set is available on Zenodo: [https://zenodo.org/records/13715694](https
 ## Corresponding Manuscript
 Please cite the manuscript if you use this library or associated data in your research.
 
-@article{battgp_fielddatafault_schaeffer24,
-  title={Gaussian Process-based Online Health Monitoring and Fault Analysis of Lithium-Ion Battery Systems from Field Data},
-  author={Schaeffer, Joachim and Lenz, Eric and Gulla, Duncan and Bazant, Martin Z. and Braatz, Richard D. and Findeisen, Rolf},
-  journal={Cell Reports Physical Sciences},
-  year={2024}
+@article{battgp_fielddatafault_schaeffer24,\
+  title={Gaussian Process-based Online Health Monitoring and Fault Analysis of Lithium-Ion Battery Systems from Field Data},\
+  author={Schaeffer, Joachim and Lenz, Eric and Gulla, Duncan and Bazant, Martin Z. and Braatz, Richard D. and Findeisen, Rolf},\
+  journal={Accepted in Cell Reports Physical Sciences},\
+  year={2024}\
 }
