@@ -173,7 +173,7 @@ There are three scripts for data visualization:
 
 0. `tutorial_recursive_spatiotemporal_gp.py` is a short tutorial to introduce the basics of the recursive spatiotemporal GP approach we are using.
 1. `example_usage_battgp.py` contains a lot of comments on how to use this software and how to get started.
-2. `gp_runner.py` runs the different models for the [data set](https://zenodo.org/records/13715694) and reproduces the results of the associated manuscripts [[1](https://arxiv.org/abs/2406.19015), [2](https://openreview.net/forum?id=18snzX2tfS)].
+2. `gp_runner.py` runs the different models for the [data set](https://zenodo.org/records/13715694) and reproduces the results of the associated manuscripts [[Cell Reports Physical Science](https://doi.org/10.1016/j.xcrp.2024.102258), [NeurIPS BDU Workshop](https://openreview.net/forum?id=18snzX2tfS)].
 
 ### Using your own data
 
@@ -260,13 +260,15 @@ BattGP Project Link: [https://github.com/JoachimSchaeffer/BattGP](https://github
 
 If you found this software useful for your research, please cite:
 
-[1] [Arxiv preprint](https://arxiv.org/abs/2406.19015), Journal article to appear on October 25th 2024:
+[1] [Cell Reports Physical Science](https://doi.org/10.1016/j.xcrp.2024.102258):
 ```tex
-@article{schaeffer2024lithium,
-  title={Lithium-ion battery system health monitoring and fault analysis from field data using Gaussian processes},
-  author={Schaeffer, Joachim and Lenz, Eric and Gulla, Duncan and Bazant, Martin Z and Braatz, Richard D and Findeisen, Rolf},
-  journal={arXiv preprint arXiv:2406.19015},
+@article{schaeffer2024_battgp,
+  title = {Gaussian process-based online health monitoring and fault analysis of lithium-ion battery systems from field data},
+	author = {Joachim Schaeffer and Eric Lenz and Duncan Gulla and Martin Z. Bazant and Richard D. Braatz and Rolf Findeisen},
+  journal = {Cell Reports Physical Science},
+	pages = {102258},
   year={2024}
+  doi = {https://doi.org/10.1016/j.xcrp.2024.102258},
 }
 ```
 
