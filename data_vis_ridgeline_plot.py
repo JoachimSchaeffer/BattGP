@@ -54,7 +54,7 @@ for batt_id in range(1, 29):
     sampling_time_container.append(sampling_times_series.to_numpy().flatten())
 
 
-xlabel_size = 55
+xlabel_size = 40
 plots = ["ibat", "cell_volt", "soc", "temp", "sampling_time"]
 
 
@@ -64,14 +64,14 @@ def add_labels(
     xlabel,
     title,
     filename,
-    fontsize=60,
+    fontsize=50,
     title_fontsize=70,
     base="results/data_vis",
 ):
     for ax, label in zip(axes, labels):
         ax.set_ylabel(
             label.split(" ")[-1],
-            fontsize=fontsize - 20,
+            fontsize=fontsize - 10,
             rotation="horizontal",
             va="top",
             ha="right",
@@ -79,9 +79,19 @@ def add_labels(
         ax.set_yticklabels([])
         ax.set_yticks([])
     axes[-1].set_xlabel(xlabel, fontsize=fontsize)
-    fig.suptitle(title, fontsize=title_fontsize, y=1.01)
+    # fig.suptitle(title, fontsize=title_fontsize, y=1.01)
     os.makedirs(base, exist_ok=True)
     fig.savefig(os.path.join(base, filename), bbox_inches="tight")
+    fig.savefig(
+        os.path.join(base, filename.replace(".pdf", ".jpg")),
+        bbox_inches="tight",
+        dpi=100,
+    )
+    fig.savefig(
+        os.path.join(base, filename.replace(".pdf", ".png")),
+        bbox_inches="tight",
+        dpi=100,
+    )
     plt.close(fig)
 
 
@@ -115,7 +125,7 @@ if "ibat" in plots:
         logscale=True,
     )
     add_labels(
-        axes, labels, "Current [A]", "Log Density of Current", "joyplot_ibat.pdf"
+        axes, labels, "Current (A)", "Log Density of Current", "joyplot_ibat.pdf"
     )
 
 if "cell_volt" in plots:
@@ -135,7 +145,7 @@ if "cell_volt" in plots:
     add_labels(
         axes,
         labels,
-        "Cell Voltage [V]",
+        "Cell Voltage (V)",
         "Log Density of Cell Voltage",
         "joyplot_cell_volt.pdf",
     )
@@ -154,7 +164,7 @@ if "soc" in plots:
         bw=0.015,
         logscale=True,
     )
-    add_labels(axes, labels, "SOC [%]", "Log Density of SOC", "joyplot_soc.pdf")
+    add_labels(axes, labels, "SOC (%)", "Log Density of SOC", "joyplot_soc.pdf")
 
 if "temp" in plots:
     print("Plotting temperature")
@@ -176,7 +186,7 @@ if "temp" in plots:
         logscale=False,
     )
     add_labels(
-        axes, labels, "Temperature [°C]", "Density of Temperature", "joyplot_temp.pdf"
+        axes, labels, "Temperature (°C)", "Density of Temperature", "joyplot_temp.pdf"
     )
 
     fig, axes = joypy.joyplot(
@@ -194,7 +204,7 @@ if "temp" in plots:
     add_labels(
         axes,
         labels,
-        "Temperature [°C]",
+        "Temperature (°C)",
         "Log Density of Temperature",
         "joyplot_logtemp.pdf",
     )
