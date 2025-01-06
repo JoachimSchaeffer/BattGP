@@ -94,7 +94,7 @@ def diagnostic_plot_datashader(
         Scale of the plot, by default 0.4, scale 1 will result in a plot of 1000x6500 pixels.
         only used when dynamic is False.
     """
-    batt_id = battdata.id
+    # batt_id = battdata.id
     battdata.df = add_nan_rows(battdata.df)
     if dynamic:
         # https://github.com/holoviz/holoviews/issues/5746
@@ -123,7 +123,7 @@ def diagnostic_plot_datashader(
     else:
         datashade.dynamic = False
         height = int(1000 * scale)
-        width = int(6500 * scale)
+        width = int(5700 * scale)
         lwl = 1.4 * scale
         lwm = 3 * scale
         lwh = 5 * scale
@@ -135,8 +135,10 @@ def diagnostic_plot_datashader(
             # print('plot.handles: ', sorted(plot.handles.keys()))
             plot.handles["plot"].legend.label_text_font_size = labelfontsize
             plot.handles["plot"].legend.spacing = int(15 * scale)
-            plot.handles["plot"].legend.glyph_height = int(60 * scale)
-            plot.handles["plot"].legend.glyph_width = int(60 * scale)
+            plot.handles["plot"].legend.glyph_height = int(80 * scale)
+            plot.handles["plot"].legend.glyph_width = int(80 * scale)
+            # increase xlabel font size
+            plot.handles["plot"].xaxis.axis_label_text_font_size = 2 * labelfontsize
 
     start_time = battdata.df.index[0]
     end_time = battdata.df.index[-1]
@@ -146,26 +148,26 @@ def diagnostic_plot_datashader(
 
     # Alphabetical title prefix list
     title_prefix_list = [
-        "a) ",
-        "b) ",
-        "c) ",
-        "d) ",
-        "e) ",
-        "f) ",
-        "g) ",
-        "h) ",
-        "i) ",
-        "j) ",
-        "k) ",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
     ]
 
     opts_plotting = {
         "width": width,
         "height": height,
         "xlabel": "Time (Date)",
-        "fontscale": 1.25 * fontscale,
+        "fontscale": 1.75 * fontscale,
         "xticks": 8,
-        "yticks": 8,
+        "yticks": 6,
         "legend_position": "right",
         # "legend_offset": (0, height / 2.465),
         "xlim": x_lim,
@@ -173,6 +175,7 @@ def diagnostic_plot_datashader(
 
     opts_plotting_upper = opts_plotting.copy()
     opts_plotting_upper["xlabel"] = ""
+    opts_plotting_upper["xticks"] = 0
 
     datashade_opts = {
         "width": width,
@@ -209,7 +212,8 @@ def diagnostic_plot_datashader(
     plot_shades_list = []
     subplot_index = 0
     # Cell Voltage
-    title_str = f"Battery {batt_id} \n {title_prefix_list[subplot_index]} Cell voltage"
+    # title_str = f"Battery {batt_id} \n {title_prefix_list[subplot_index]} Cell voltage"
+    title_str = f"{title_prefix_list[subplot_index]} Cell voltage"
     voltage_cell_cols = [
         f"U_Cell_{i}" for i in range(1, len(battdata.cell_voltage_cols) + 1)
     ]
@@ -433,7 +437,7 @@ def diagnostic_plot_datashader(
     )
     curve_data_avail = hv.Scatter(df_ones)
     opts_data_avail = opts_plotting.copy()
-    opts_data_avail["height"] = int(opts_plotting["height"] / 2.5)
+    opts_data_avail["height"] = int(opts_plotting["height"] / 2)
     if opts_data_avail["height"] / opts_data_avail["width"] < 1 / 20:
         print(
             "Warning: height/width ratio is less than 1/20 for data availability plot, this may cause issues with the title and ticks."
