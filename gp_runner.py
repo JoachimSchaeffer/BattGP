@@ -27,12 +27,7 @@ from src.plot_utils import merge_pdfs
 
 warnings.filterwarnings("ignore", category=NumericalWarning)
 
-plt.style.use("seaborn-v0_8-white")
-
-setup_paths()
-data_utils.build_data_cache()
-
-MODE = "spatio_temporal"  # "full_gp"  # "spatio_temporal"
+MODE = "full_gp"  # "full_gp"  # "spatio_temporal"
 FAULT_PROBS = 10 ** (-3) * np.array([0.55])  # np.linspace(0.50, 0.70, 41)
 OP = Op(-15, 90, 25)
 
@@ -176,18 +171,10 @@ def worker(
     )
 
 
-def full_run(
-    single_system=True,
-    fault_prob=True,
-    save_path=None,
-    ocv_path=None,
-    segment_criteria=None,
-    cs_string=None,
-    use_always_cpu=False,
-):
-
-    cell_characterstics = data_utils.read_cell_characteristics(path=ocv_path)
-
+def main():
+    # Depending on the actual hardware setup it might be faster to use the cpu even if
+    # a cuda gpu is available.
+    use_always_cpu = False
     if not use_always_cpu and torch.cuda.is_available():
         device = torch.device("cuda")
         n_devices = torch.cuda.device_count()
@@ -196,9 +183,60 @@ def full_run(
     else:
         device = torch.device("cpu")
         n_devices = 0
-
+    if n_devices > 1:
+        try:
+            mp.set_start_method("spawn")
+        except Exception as e:
+            print(f"{e}, continuing!")
     print(f"    on device: {device}")
+    
+    plt.style.use("seaborn-v0_8-white")
+    setup_paths()
+    data_utils.build_data_cache()
+    
+    single_system = False
+    fault_prob = True
+    ocv_path = "data/ocv_linear_approx.csv"
+    cell_characterstics = data_utils.read_cell_characteristics(path=ocv_path)
+    
+    
+    save_path_base = cfg.PATH_RESULTS
+    SOC_UCO = cfg.SOC_UPPER_LIMIT
+    SOC_LCO = cfg.SOC_LOWER_LIMIT
+    ICL = cfg.Ibat_LOWER_LIMIT
+    I_CU = cfg.Ibat_UPPER_LIMIT
 
+    run_date = time.strftime("%Y%m%d%H%M%S")
+    save_path = os.path.join(save_path_base, "batt_gp_run_" + run_date + "/")
+    Path(save_path).mkdir(parents=True, exist_ok=True)
+    shutil.copyfile("src/config.py", os.path.join(save_path, "config.py"))
+    shutil.copyfile("gp_runner.py", os.path.join(save_path, "gp_runner.py"))
+
+    cs_string = f"SOC_{SOC_UCO}_{SOC_LCO}_I_{I_CU}_{ICL}"
+    cs_string += f"_{ocv_path.split('ocv_')[1].split('.')[0]}"
+    print(f"Running CS: {cs_string}")
+    Path(save_path).mkdir(parents=True, exist_ok=True)
+
+    segment_criteria: SegmentCriteria = SegmentCriteria(
+        soc_upper_limit=SOC_UCO,
+        soc_lower_limit=SOC_LCO,
+        ibat_upper_limit=I_CU,
+        ibat_lower_limit=ICL,
+        t_upper_limit=cfg.T_UPPER_LIMIT,
+        t_lower_limit=cfg.T_LOWER_LIMIT,
+    )
+
+    df_info = pd.DataFrame(
+        {
+            "ocv_curve": ocv_path,
+            "SOC_UCO": SOC_UCO,
+            "SOC_LCO": SOC_LCO,
+            "I_CU": I_CU,
+        },
+        index=[0],
+    )
+    df_info.to_csv(os.path.join(save_path, "case_study_info.csv"))
+    
     if single_system:
         batt_id = ["4"]
     else:
@@ -206,11 +244,6 @@ def full_run(
         # For basis point studies, take:
         batt_id = ["6", "8", "9", "10", "18", "21"]
     if n_devices > 1:
-        try:
-            mp.set_start_method("spawn")
-        except Exception as e:
-            print(f"{e}, continuing!")
-
         print("ID of main process: {}".format(os.getpid()))
         print("Number of processes: {}".format(n_devices))
         if n_devices == 4:
@@ -284,58 +317,6 @@ def full_run(
                     save_path, "forward_prob_causal", cs_string=cs_string, fault_prob=i_
                 )
 
-
 if __name__ == "__main__":
-    single_system = False
-    fault_prob = True
-    ocv = "data/ocv_linear_approx.csv"
-    # Depending on the actual hardware setup it might be faster to use the cpu even if
-    # a cuda gpu is available.
-    use_always_cpu = False
-
-    save_path_base = cfg.PATH_RESULTS
-    SOC_UCO = cfg.SOC_UPPER_LIMIT
-    SOC_LCO = cfg.SOC_LOWER_LIMIT
-    ICL = cfg.Ibat_LOWER_LIMIT
-    I_CU = cfg.Ibat_UPPER_LIMIT
-
-    run_date = time.strftime("%Y%m%d%H%M%S")
-    save_path = os.path.join(save_path_base, "batt_gp_run_" + run_date + "/")
-    Path(save_path).mkdir(parents=True, exist_ok=True)
-    shutil.copyfile("src/config.py", os.path.join(save_path, "config.py"))
-    shutil.copyfile("gp_runner.py", os.path.join(save_path, "gp_runner.py"))
-
-    cs_string = f"SOC_{SOC_UCO}_{SOC_LCO}_I_{I_CU}_{ICL}"
-    cs_string += f"_{ocv.split('ocv_')[1].split('.')[0]}"
-    print(f"Running CS: {cs_string}")
-    Path(save_path).mkdir(parents=True, exist_ok=True)
-
-    segment_criteria: SegmentCriteria = SegmentCriteria(
-        soc_upper_limit=SOC_UCO,
-        soc_lower_limit=SOC_LCO,
-        ibat_upper_limit=I_CU,
-        ibat_lower_limit=ICL,
-        t_upper_limit=cfg.T_UPPER_LIMIT,
-        t_lower_limit=cfg.T_LOWER_LIMIT,
-    )
-
-    df_info = pd.DataFrame(
-        {
-            "ocv_curve": ocv,
-            "SOC_UCO": SOC_UCO,
-            "SOC_LCO": SOC_LCO,
-            "I_CU": I_CU,
-        },
-        index=[0],
-    )
-    df_info.to_csv(os.path.join(save_path, "case_study_info.csv"))
-
-    full_run(
-        single_system=single_system,
-        fault_prob=fault_prob,
-        save_path=save_path,
-        ocv_path=ocv,
-        segment_criteria=segment_criteria,
-        cs_string=cs_string,
-        use_always_cpu=use_always_cpu,
-    )
+    main()
+    
