@@ -241,13 +241,6 @@ def plot_cell_r0_predictions(
         else:
             axs[2].set_ylim([0.8, 1001])
         axs[2].yaxis.set_major_locator(mticker.LogLocator(base=100))
-        axs[2].plot(
-            Xt[:, 0],
-            0 * Xt[:, 0],
-            "r.",
-            label="meas.",
-        )
-        # axs[2].set_yticks([])
         axs[2].set_ylabel("Data")
         # activate horizontal grid
         axs[2].grid(axis="y", linestyle="--", alpha=0.5)
