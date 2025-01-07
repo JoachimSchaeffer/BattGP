@@ -27,7 +27,7 @@ from src.plot_utils import merge_pdfs
 
 warnings.filterwarnings("ignore", category=NumericalWarning)
 
-MODE = "full_gp"  # "full_gp"  # "spatio_temporal"
+MODE = "spatio_temporal"  # "full_gp"  # "spatio_temporal"
 FAULT_PROBS = 10 ** (-3) * np.array([0.55])  # np.linspace(0.50, 0.70, 41)
 OP = Op(-15, 90, 25)
 
